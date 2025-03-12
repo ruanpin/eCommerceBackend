@@ -84,12 +84,14 @@ exports.userInfo = async (req, res) => {
             return res.status(200).json({ message: '使用者不存在', status: 400 });
         }
         return res.status(200).json({ 
-            user: {
+            message: "success",
+            data: {
                 id: user.id,
                 email: user.email,
                 name: user.name,
                 phone: user.phone,
-                address: user.address
+                address: user.address,
+                role: user.role
             },
             status: 200
         });

@@ -11,4 +11,4 @@ router.post('/', verifyToken, verifyAdmin, categoryController.createCategory);
 router.put('/', verifyToken, verifyAdmin, categoryController.updateCategory);
 router.delete('/', verifyToken, verifyAdmin, categoryController.deleteCategory);
 
-module.exports = router; 
+module.exports = router;
