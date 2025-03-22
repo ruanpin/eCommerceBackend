@@ -1,13 +1,18 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
+const { isValidEmail } = require("../utils/validators");
 require('dotenv').config();
+const authMiddleware = require("../middlewares/authMiddleware");
 
 exports.register = async (req, res) => {
     const { name, email, password, role } = req.body;
 
     if (!name || !email || !password) {
         return res.status(400).json({ message: 'Please provide complete information.', status: 400 });
+    }
+    if (!isValidEmail(email)) {
+        return res.status(400).json({ message: 'Invalid email format.', status: 400 });
     }
 
     try {
@@ -77,7 +82,7 @@ exports.login = async (req, res) => {
     }
 };
 
-exports.userInfo = async (req, res) => {
+exports.getUserInfo = async (req, res) => {
     try {
         const user = await User.getById(req.user.id);
         if (!user) {
@@ -95,6 +100,34 @@ exports.userInfo = async (req, res) => {
             },
             status: 200
         });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Server Error', status: 500 });
+    }
+}
+
+exports.updateUserInfo = async (req, res) => {
+    try {
+        const id = req.user.id;
+        const {
+            name,
+            phone
+        } = req.body;
+
+        if (!name || !phone) return res.status(400).json({ message: 'name and phone must be provided.' });
+
+        const userData = {
+            name,
+            phone
+        };
+
+        const success = await User.update(id, userData);
+        
+        if (success) {
+            res.status(200).json({ message: 'user info updated success.', status: 200 });
+        } else {
+            res.status(404).json({ message: 'user info updated fail.', status: 400 });
+        }
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: 'Server Error', status: 500 });

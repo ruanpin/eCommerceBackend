@@ -19,7 +19,7 @@ exports.verifyToken = async (req, res, next) => {
         req.user = user;
         next();
     } catch (error) {
-        return res.status(401).json({ error: 'token無效' });
+        return res.status(403).json({ error: 'token無效' });
     }
 };
 
