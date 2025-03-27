@@ -114,7 +114,7 @@ exports.updateUserInfo = async (req, res) => {
             phone
         } = req.body;
 
-        if (!name || !phone) return res.status(400).json({ message: 'name and phone must be provided.' });
+        if (!name || !phone) return res.status(400).json({ message: 'name and phone must be provided.', status: 400 });
 
         const userData = {
             name,
@@ -126,7 +126,7 @@ exports.updateUserInfo = async (req, res) => {
         if (success) {
             res.status(200).json({ message: 'user info updated success.', status: 200 });
         } else {
-            res.status(404).json({ message: 'user info updated fail.', status: 400 });
+            res.status(400).json({ message: 'user info updated fail.', status: 400 });
         }
     } catch (error) {
         console.error(error);
