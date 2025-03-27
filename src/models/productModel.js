@@ -1,7 +1,7 @@
 const db = require('../config/database');
 
 class Product {
-    static async getAll(page = 1, limit = 10, filters = {}) {
+    static async getAll(page, limit, filters) {
         let query = `
             SELECT p.*, c.name as category_name 
             FROM products p 
@@ -10,7 +10,6 @@ class Product {
         `;
         const values = [];
 
-        // 添加筛选条件
         if (filters.category_id) {
             query += ' AND p.category_id = ?';
             values.push(filters.category_id);
@@ -24,7 +23,6 @@ class Product {
             values.push(filters.is_new);
         }
 
-        // 添加排序和分页
         query += ' ORDER BY p.created_at DESC LIMIT ? OFFSET ?';
         values.push(limit, (page - 1) * limit);
 
@@ -44,36 +42,22 @@ class Product {
     }
 
     static async create(data) {
-        const {
-            name,
-            description,
-            price,
-            stock,
-            category_id,
-            gender,
-            image_url,
-            is_new
-        } = data;
-
         const [result] = await db.query(
             `INSERT INTO products 
             (name, description, price, stock, category_id, gender, image_url, is_new) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-            [name, description, price, stock, category_id, gender, image_url, is_new]
+            [
+                data.name, data.description, data.price, data.stock, 
+                data.category_id, data.gender, data.image_url, data.is_new
+            ]
         );
         return result.insertId;
     }
 
     static async update(id, data) {
         const allowedFields = [
-            'name',
-            'description',
-            'price',
-            'stock',
-            'category_id',
-            'gender',
-            'image_url',
-            'is_new'
+            'name', 'description', 'price', 'stock',
+            'category_id', 'gender', 'image_url', 'is_new'
         ];
         const updates = [];
         const values = [];
@@ -99,14 +83,6 @@ class Product {
         const [result] = await db.query('DELETE FROM products WHERE id = ?', [id]);
         return result.affectedRows > 0;
     }
-
-    static async updateStock(id, quantity) {
-        const [result] = await db.query(
-            'UPDATE products SET stock = stock + ? WHERE id = ? AND stock + ? >= 0',
-            [quantity, id, quantity]
-        );
-        return result.affectedRows > 0;
-    }
 }
 
-module.exports = Product; 
+module.exports = Product;
