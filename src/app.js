@@ -3,7 +3,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 
 const authRoutes = require('./routes/authRoutes');
-const bannerRoutes = require('./routes/bannerRoutes');
+// const bannerRoutes = require('./routes/bannerRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const productRoutes = require('./routes/productRoutes');
 
@@ -16,7 +16,7 @@ app.use(morgan('dev')); // 記錄請求日誌
 
 // 路由設定
 app.use('/api/auth', authRoutes);
-app.use('/api/banners', bannerRoutes);
+// app.use('/api/banners', bannerRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/products', productRoutes);
 

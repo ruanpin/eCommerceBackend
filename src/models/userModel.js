@@ -1,8 +1,7 @@
 const db = require('../config/database');
 
 class User {
-    static async create({email, password, name, role, phone = null, address = null}) {
-        console.log(email, password, name, role);
+    static async create({ email, password, name, role, phone = null, address = null }) {
         const [result] = await db.query(
             'INSERT INTO users (email, password, name, role, phone, address) VALUES (?, ?, ?, ?, ?, ?)',
             [email, password, name, role, phone, address]
@@ -14,11 +13,6 @@ class User {
         const [rows] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
         return rows[0];
     }
-
-    // static async getByPassword(password) {
-    //     const [rows] = await db.query('SELECT * FROM users WHERE password = ?', [password]);
-    //     return rows[0];
-    // }
 
     static async getById(id) {
         const [rows] = await db.query('SELECT * FROM users WHERE id = ?', [id]);
