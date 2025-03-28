@@ -28,8 +28,41 @@ class CartService {
     }
 
     // 取得會員購物車商品（含分頁）
+    // static async getCartItems(userId, page = 1, limit = 10) {
+    //     return await Cart.getCartItemsByUserId(userId, page, limit);
+    // }
     static async getCartItems(userId, page = 1, limit = 10) {
-        return await Cart.getCartItemsByUserId(userId, page, limit);
+        const { items, totalItems, totalPages, currentPage } = await Cart.getCartItemsByUserId(userId, page, limit);
+    
+        // 商業邏輯：處理 variants 並計算總金額
+        let totalAmount = 0;
+    
+        // 處理每一個購物車項目
+        items.forEach(item => {
+            console.log(item.variants, 'item.variants');
+            if (typeof item.variants === 'string') {
+                item.variants = JSON.parse(item.variants)
+            }
+            const variant = item.variants.find(v => v.color === item.color && v.size === item.size);
+            
+            // 如果找到了對應的 variant，就取出價格
+            if (variant) {
+                item.price = variant.price;
+            } else {
+                item.price = 0;  // 如果沒有找到對應的價格，設為 0
+            }
+            
+            // 計算總金額
+            totalAmount += item.quantity * item.price;
+        });
+    
+        return {
+            items,
+            totalItems,
+            totalAmount,  // 返回總金額
+            totalPages,
+            currentPage
+        };
     }
 }
 

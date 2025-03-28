@@ -51,12 +51,13 @@ exports.getCart = async (req, res) => {
     const { page = 1, limit = 10 } = req.query;
 
     try {
-        const { items, totalItems, totalPages, currentPage } = await CartService.getCartItems(userId, page, limit);
+        const { items, totalItems, totalAmount, totalPages, currentPage } = await CartService.getCartItems(userId, page, limit);
         res.status(200).json({
             message: "Query successful.",
             status: 200,
             items,
             totalItems,
+            totalAmount,
             totalPages,
             currentPage
         });
