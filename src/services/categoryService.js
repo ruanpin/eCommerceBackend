@@ -1,46 +1,42 @@
 const Category = require('../models/categoryModel');
 
 class CategoryService {
-    // 獲取所有商品類別
     static async getAllCategories() {
         try {
             return await Category.getAll();
         } catch (error) {
-            throw new Error('獲取商品種類失敗');
+            throw new Error('search failed.');
         }
     }
 
-    // 創建商品類別
     static async createCategory(name) {
         if (!name) {
-            throw new Error('商品種類名稱是必填項');
+            throw new Error('The "name" field is required');
         }
 
         const isCategoryNameExist = await Category.getByName(name);
         if (isCategoryNameExist) {
-            throw new Error('此商品種類已存在');
+            throw new Error('The category field already exist.');
         }
 
         return await Category.create(name);
     }
 
-    // 更新商品類別
     static async updateCategory(id, name) {
         if (!name) {
-            throw new Error('商品種類名稱是必填項');
+            throw new Error('The "name" field is required');
         }
 
         const success = await Category.update(id, name);
         if (!success) {
-            throw new Error('商品種類不存在');
+            throw new Error('The category is not exist.');
         }
     }
 
-    // 刪除商品類別
     static async deleteCategory(id) {
         const success = await Category.delete(id);
         if (!success) {
-            throw new Error('商品種類不存在');
+            throw new Error('The category is not exist.');
         }
     }
 }
