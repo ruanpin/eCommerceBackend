@@ -39,7 +39,6 @@ class CartService {
     
         // 處理每一個購物車項目
         items.forEach(item => {
-            console.log(item.variants, 'item.variants');
             if (typeof item.variants === 'string') {
                 item.variants = JSON.parse(item.variants)
             }

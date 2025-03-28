@@ -41,8 +41,6 @@ class Cart {
             JOIN products p ON ci.product_id = p.id
             WHERE ci.user_id = ${userId}  -- 直接填入 userId
             LIMIT ${limit} OFFSET ${offset}`
-
-        console.log("Executing query:", query);  // 打印查詢語句來檢查
         
         const [items] = await db.execute(query);  // 執行 SQL 查詢
         
