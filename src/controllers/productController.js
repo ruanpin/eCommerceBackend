@@ -1,5 +1,24 @@
 const ProductService = require('../services/productService');
 
+exports.searchProducts = async (req, res) => {
+    try {
+        const { page = 1, pageSize = 10, keyword = '', categoryId = null } = req.query;
+
+        // 透過 ProductService 進行查詢
+        const { data, total } = await ProductService.searchProducts(parseInt(page), parseInt(pageSize), keyword, categoryId);
+        
+        // 回傳商品清單和總資料筆數
+        res.json({
+            data,
+            total,
+            message: 'success',
+            status: 200
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message, status: 500 });
+    }
+};
 // 查詢所有產品，並支持分頁
 exports.getProducts = async (req, res) => {
     // {

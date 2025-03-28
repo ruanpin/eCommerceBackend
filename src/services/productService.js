@@ -1,6 +1,14 @@
 const Product = require('../models/productModel');
 
 class ProductService {
+    static async searchProducts(page, pageSize, keyword, categoryId) {
+        try {
+            const { data, total } = await Product.searchProducts(page, pageSize, keyword, categoryId);
+            return { data, total };
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
     // 查詢所有產品，並包含分頁器
     static async getAll(page = 1, pageSize = 10) {
         const products = await Product.getAll(page, pageSize);

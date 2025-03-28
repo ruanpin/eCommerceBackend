@@ -3,8 +3,10 @@ const router = express.Router();
 const productController = require('../controllers/productController');
 const { verifyToken, verifyAdmin } = require('../middlewares/authMiddleware');
 
+router.get('/search', productController.searchProducts);
+
 // 查詢所有產品，並包含分頁
-router.get('/', productController.getProducts);
+router.get('/', verifyToken, verifyAdmin, productController.getProducts);
 // 查詢單個產品
 router.get('/:id', verifyToken, verifyAdmin, productController.getProductById);
 // 新增產品

@@ -1,6 +1,37 @@
 const db = require('../config/database');
 
 class Product {
+    // 遊客關鍵字、類別查詢
+    static async searchProducts(page, pageSize, keyword, categoryId) {
+        const offset = (page - 1) * pageSize;
+        
+        let query = 'SELECT * FROM products WHERE 1=1';
+        const params = [];
+        
+        if (keyword) {
+            query += ' AND name LIKE ?';
+            params.push(`%${keyword}%`);
+        }
+        
+        if (categoryId) {
+            query += ' AND category_id = ?';
+            params.push(categoryId);
+        }
+        
+        query += ' LIMIT ?, ?';
+        params.push(offset, pageSize);
+
+        const [rows] = await db.query(query, params);
+
+        // 獲取符合條件的總資料數量
+        const [totalRows] = await db.query('SELECT COUNT(*) AS total FROM products WHERE 1=1' + (keyword ? ' AND name LIKE ?' : '') + (categoryId ? ' AND category_id = ?' : ''), 
+            keyword ? [...params.slice(0, -2), `%${keyword}%`, ...params.slice(-2)] : params);
+
+        return {
+            data: rows,
+            total: totalRows[0].total
+        };
+    }
     // 查詢所有產品，並包含分頁
     static async getAll(page = 1, pageSize = 10) {
         const offset = (page - 1) * pageSize;
