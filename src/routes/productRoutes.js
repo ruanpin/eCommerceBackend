@@ -3,13 +3,15 @@ const router = express.Router();
 const productController = require('../controllers/productController');
 const { verifyToken, verifyAdmin } = require('../middlewares/authMiddleware');
 
-// 公开路由
-router.get('/', productController.getAllProducts);
-router.get('/:id', productController.getProductById);
-
-// 需要管理员权限的路由
+// 查詢所有產品，並包含分頁
+router.get('/', verifyToken, verifyAdmin, productController.getProducts);
+// 查詢單個產品
+router.get('/:id', verifyToken, verifyAdmin, productController.getProductById);
+// 新增產品
 router.post('/', verifyToken, verifyAdmin, productController.createProduct);
+// 更新產品
 router.put('/:id', verifyToken, verifyAdmin, productController.updateProduct);
+// 刪除產品
 router.delete('/:id', verifyToken, verifyAdmin, productController.deleteProduct);
 
 module.exports = router; 

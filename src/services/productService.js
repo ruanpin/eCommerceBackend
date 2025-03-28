@@ -1,41 +1,46 @@
 const Product = require('../models/productModel');
 
 class ProductService {
-    static async getAllProducts(page, limit, filters) {
-        return await Product.getAll(page, limit, filters);
+    // 查詢所有產品，並包含分頁器
+    static async getAll(page = 1, pageSize = 10) {
+        const products = await Product.getAll(page, pageSize);
+        return products;
     }
 
-    static async getProductById(id) {
-        return await Product.getById(id);
+    // 查詢單個產品
+    static async getById(id) {
+        const product = await Product.getById(id);
+        if (!product) {
+            throw new Error('Product not found');
+        }
+        return product;
     }
 
-    static async createProduct(data) {
-        if (!data.name || !data.price) {
-            throw new Error('商品名稱和價格是必填項');
-        }
-        if (data.price < 0) {
-            throw new Error('價格不能為負數');
-        }
-        if (data.stock < 0) {
-            throw new Error('庫存不能為負數');
-        }
-
-        return await Product.create(data);
+    // 新增產品
+    static async create(data) {
+        const { name, description, category_id, is_new, variants } = data;
+        const newProductId = await Product.create({ name, description, category_id, is_new, variants });
+        return newProductId;
     }
 
-    static async updateProduct(id, data) {
-        if (data.price !== undefined && data.price < 0) {
-            throw new Error('價格不能為負數');
+    // 更新產品
+    static async update(id, data) {
+        const existingProduct = await Product.getById(id);
+        if (!existingProduct) {
+            throw new Error('Product not found');
         }
-        if (data.stock !== undefined && data.stock < 0) {
-            throw new Error('庫存不能為負數');
-        }
-
-        return await Product.update(id, data);
+        await Product.update(id, data);
+        return id;
     }
 
-    static async deleteProduct(id) {
-        return await Product.delete(id);
+    // 刪除產品
+    static async delete(id) {
+        const existingProduct = await Product.getById(id);
+        if (!existingProduct) {
+            throw new Error('Product not found');
+        }
+        await Product.delete(id);
+        return id;
     }
 }
 

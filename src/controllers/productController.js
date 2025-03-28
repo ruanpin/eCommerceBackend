@@ -1,72 +1,137 @@
 const ProductService = require('../services/productService');
 
-exports.getAllProducts = async (req, res) => {
+// 查詢所有產品，並支持分頁
+exports.getProducts = async (req, res) => {
+    // {
+    //     "page": 1,        // 頁碼，預設值為 1
+    //     "pageSize": 10    // 每頁顯示的數量，預設為 10
+    //   }
     try {
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 10;
-
-        const filters = {};
-        if (req.query.category_id) filters.category_id = req.query.category_id;
-        if (req.query.gender) filters.gender = req.query.gender;
-        if (req.query.is_new) filters.is_new = req.query.is_new === 'true';
-
-        const products = await ProductService.getAllProducts(page, limit, filters);
-        res.json(products);
+        const { page = 1, pageSize = 10 } = req.query; // 預設值為 1 和 10
+        const products = await ProductService.getAll(parseInt(page), parseInt(pageSize));
+        res.status(200).json({
+            message: 'Products fetched successfully',
+            data: products
+        });
     } catch (error) {
-        res.status(500).json({ error: '獲取商品列表失敗' });
+        res.status(400).json({
+            message: error.message,
+            status: 400
+        });
     }
 };
 
+// 根據 ID 查詢單個產品
 exports.getProductById = async (req, res) => {
     try {
-        const { id } = req.params;
-        const product = await ProductService.getProductById(id);
-
-        if (!product) {
-            return res.status(404).json({ error: '商品不存在' });
-        }
-
-        res.json(product);
+        const productId = req.params.id;
+        const product = await ProductService.getById(productId);
+        res.status(200).json({
+            message: 'Product fetched successfully',
+            data: product
+        });
     } catch (error) {
-        res.status(500).json({ error: '獲取商品詳情失敗' });
+        res.status(400).json({
+            message: error.message,
+            status: 400
+        });
     }
 };
 
+// 新增產品
 exports.createProduct = async (req, res) => {
+    // {
+    //     "name": "T-shirt No1",
+    //     "description": "A comfortable cotton T-shirt--No1",
+    //     "category_id": 1,
+    //     "is_new": true,
+    //     "variants": [
+    //         {
+    //             "color": "Red",
+    //             "color_code": "#FF0000",
+    //             "size": "M",
+    //             "price": 19.99,
+    //             "stock": 50,
+    //             "image_url": "https://example.com/images/tshirt-red-m.jpg"
+    //         },
+    //         {
+    //             "color": "Red",
+    //             "color_code": "#FF0000",
+    //             "size": "L",
+    //             "price": 19.99,
+    //             "stock": 35,
+    //             "image_url": "https://example.com/images/tshirt-red-l.jpg"
+    //         }
+    //     ]
+    // }
     try {
-        const productId = await ProductService.createProduct(req.body);
-        res.status(201).json({ message: '商品創建成功', id: productId });
+        const data = req.body;
+        const productId = await ProductService.create(data);
+        res.status(201).json({
+            message: 'Product created successfully',
+            data: productId
+        });
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        res.status(400).json({
+            message: error.message,
+            status: 400
+        });
     }
 };
 
+// 更新產品
 exports.updateProduct = async (req, res) => {
+    // {
+    //     "name": "T-shirt No1",
+    //     "description": "A comfortable cotton T-shirt--No1",
+    //     "category_id": 1,
+    //     "is_new": true,
+    //     "variants": [
+    //         {
+    //             "color": "Red",
+    //             "color_code": "#FF0000",
+    //             "size": "M",
+    //             "price": 19.99,
+    //             "stock": 50,
+    //             "image_url": "https://example.com/images/tshirt-red-m.jpg"
+    //         },
+    //         {
+    //             "color": "Red",
+    //             "color_code": "#FF0000",
+    //             "size": "L",
+    //             "price": 19.99,
+    //             "stock": 35,
+    //             "image_url": "https://example.com/images/tshirt-red-l.jpg"
+    //         }
+    //     ]
+    // }
     try {
-        const { id } = req.params;
-        const success = await ProductService.updateProduct(id, req.body);
-
-        if (success) {
-            res.json({ message: '商品更新成功' });
-        } else {
-            res.status(404).json({ error: '商品不存在' });
-        }
+        const productId = req.params.id;
+        const data = req.body;
+        await ProductService.update(productId, data);
+        res.status(200).json({
+            message: 'Product updated successfully'
+        });
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        res.status(400).json({
+            message: error.message,
+            status: 400
+        });
     }
 };
 
+// 刪除產品
 exports.deleteProduct = async (req, res) => {
     try {
-        const { id } = req.params;
-        const success = await ProductService.deleteProduct(id);
-
-        if (success) {
-            res.json({ message: '商品刪除成功' });
-        } else {
-            res.status(404).json({ error: '商品不存在' });
-        }
+        const productId = req.params.id;
+        await ProductService.delete(productId);
+        res.status(200).json({
+            message: 'Product deleted successfully'
+        });
     } catch (error) {
-        res.status(500).json({ error: '刪除商品失敗' });
+        res.status(400).json({
+            message: error.message,
+            status: 400
+        });
     }
 };

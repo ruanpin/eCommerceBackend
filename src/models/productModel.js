@@ -1,86 +1,40 @@
 const db = require('../config/database');
 
 class Product {
-    static async getAll(page, limit, filters) {
-        let query = `
-            SELECT p.*, c.name as category_name 
-            FROM products p 
-            LEFT JOIN categories c ON p.category_id = c.id
-            WHERE 1=1
-        `;
-        const values = [];
-
-        if (filters.category_id) {
-            query += ' AND p.category_id = ?';
-            values.push(filters.category_id);
-        }
-        if (filters.gender) {
-            query += ' AND p.gender = ?';
-            values.push(filters.gender);
-        }
-        if (filters.is_new !== undefined) {
-            query += ' AND p.is_new = ?';
-            values.push(filters.is_new);
-        }
-
-        query += ' ORDER BY p.created_at DESC LIMIT ? OFFSET ?';
-        values.push(limit, (page - 1) * limit);
-
-        const [rows] = await db.query(query, values);
+    // 查詢所有產品，並包含分頁
+    static async getAll(page = 1, pageSize = 10) {
+        const offset = (page - 1) * pageSize;
+        const query = 'SELECT * FROM products LIMIT ?, ?';
+        const [rows] = await db.query(query, [offset, pageSize]);
         return rows;
     }
 
+    // 根據 ID 查詢產品
     static async getById(id) {
-        const [rows] = await db.query(
-            `SELECT p.*, c.name as category_name 
-             FROM products p 
-             LEFT JOIN categories c ON p.category_id = c.id 
-             WHERE p.id = ?`,
-            [id]
-        );
+        const [rows] = await db.query('SELECT * FROM products WHERE id = ?', [id]);
         return rows[0];
     }
 
+    // 新增產品
     static async create(data) {
-        const [result] = await db.query(
-            `INSERT INTO products 
-            (name, description, price, stock, category_id, gender, image_url, is_new) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-            [
-                data.name, data.description, data.price, data.stock, 
-                data.category_id, data.gender, data.image_url, data.is_new
-            ]
-        );
+        const { name, description, category_id, is_new, variants } = data;
+        const query = 'INSERT INTO products (name, description, category_id, is_new, variants) VALUES (?, ?, ?, ?, ?)';
+        const [result] = await db.query(query, [name, description, category_id, is_new, JSON.stringify(variants)]);
         return result.insertId;
     }
 
+    // 更新產品
     static async update(id, data) {
-        const allowedFields = [
-            'name', 'description', 'price', 'stock',
-            'category_id', 'gender', 'image_url', 'is_new'
-        ];
-        const updates = [];
-        const values = [];
-
-        for (const field of allowedFields) {
-            if (data[field] !== undefined) {
-                updates.push(`${field} = ?`);
-                values.push(data[field]);
-            }
-        }
-
-        if (updates.length === 0) return false;
-
-        values.push(id);
-        const [result] = await db.query(
-            `UPDATE products SET ${updates.join(', ')} WHERE id = ?`,
-            values
-        );
+        const { name, description, category_id, is_new, variants } = data;
+        const query = 'UPDATE products SET name = ?, description = ?, category_id = ?, is_new = ?, variants = ? WHERE id = ?';
+        const [result] = await db.query(query, [name, description, category_id, is_new, JSON.stringify(variants), id]);
         return result.affectedRows > 0;
     }
 
+    // 刪除產品
     static async delete(id) {
-        const [result] = await db.query('DELETE FROM products WHERE id = ?', [id]);
+        const query = 'DELETE FROM products WHERE id = ?';
+        const [result] = await db.query(query, [id]);
         return result.affectedRows > 0;
     }
 }
