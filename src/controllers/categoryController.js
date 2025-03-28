@@ -44,15 +44,9 @@ exports.deleteCategory = async (req, res) => {
     try {
         const { id } = req.query;
         await CategoryService.deleteCategory(id);
-        res.json({ message: 'deleted successfully.' });
+        res.json({ message: 'deleted successfully.', status: 200 });
     } catch (error) {
         console.error(error);
-        if (error.message === 'ER_ROW_IS_REFERENCED_2') {
-            return res.status(400).json({ 
-                message: 'Cannot delete this product category because there are still products belonging to it.',
-                status: 400 
-            });
-        }
         res.status(400).json({ message: error.message, status: 400 });
     }
 };
