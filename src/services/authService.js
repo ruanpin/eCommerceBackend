@@ -6,36 +6,36 @@ const { isValidEmail } = require("../utils/validators");
 class AuthService {
     static async register({ name, email, password, role }) {
         if (!name || !email || !password) {
-            throw new Error('請提供完整資訊');
+            throw new Error('Name, email and password field are required');
         }
         if (!isValidEmail(email)) {
-            throw new Error('Email 格式不正確');
+            throw new Error('Invalid email format.');
         }
 
         const existingUser = await User.getByEmail(email);
         if (existingUser) {
-            throw new Error('此 Email 已被註冊');
+            throw new Error('This email is already registered.');
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
         await User.create({ email, password: hashedPassword, name, role });
 
-        return { message: '註冊成功，請登入！' };
+        return { message: 'Registration successful, please log in!' };
     }
 
     static async login({ email, password }) {
         if (!email || !password) {
-            throw new Error('請提供 Email 與密碼');
+            throw new Error('Please provide your email and password.');
         }
 
         const user = await User.getByEmail(email);
         if (!user) {
-            throw new Error('Email 或密碼錯誤');
+            throw new Error('Incorrect email or password.');
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            throw new Error('Email 或密碼錯誤');
+            throw new Error('Incorrect email or password.');
         }
 
         const token = jwt.sign(
@@ -45,7 +45,7 @@ class AuthService {
         );
 
         return {
-            message: '登入成功',
+            message: 'Login successful',
             token,
             user: {
                 id: user.id,
@@ -58,7 +58,7 @@ class AuthService {
     static async getUserInfo(userId) {
         const user = await User.getById(userId);
         if (!user) {
-            throw new Error('使用者不存在');
+            throw new Error('User does not exist');
         }
         return {
             id: user.id,
@@ -72,15 +72,15 @@ class AuthService {
 
     static async updateUserInfo(userId, data) {
         if (!data.name || !data.phone) {
-            throw new Error('請提供姓名和電話');
+            throw new Error('Please provide your name and phone number.');
         }
 
         const success = await User.update(userId, data);
         if (!success) {
-            throw new Error('更新失敗');
+            throw new Error('update failed');
         }
 
-        return { message: '使用者資訊更新成功' };
+        return { message: 'updated successfully' };
     }
 }
 
