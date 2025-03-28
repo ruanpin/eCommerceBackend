@@ -1,6 +1,6 @@
 const db = require('../config/database');
 
-class User {
+class Auth {
     static async create({ email, password, name, role, phone = null, address = null }) {
         const [result] = await db.query(
             'INSERT INTO users (email, password, name, role, phone, address) VALUES (?, ?, ?, ?, ?, ?)',
@@ -50,4 +50,4 @@ class User {
     }
 }
 
-module.exports = User;
+module.exports = Auth;

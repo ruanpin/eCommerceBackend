@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const User = require('../models/userModel');
+const Auth = require('../models/authModel');
 const { isValidEmail } = require("../utils/validators");
 
 class AuthService {
@@ -12,13 +12,13 @@ class AuthService {
             throw new Error('Invalid email format.');
         }
 
-        const existingUser = await User.getByEmail(email);
+        const existingUser = await Auth.getByEmail(email);
         if (existingUser) {
             throw new Error('This email is already registered.');
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        await User.create({ email, password: hashedPassword, name, role });
+        await Auth.create({ email, password: hashedPassword, name, role });
 
         return { message: 'Registration successful, please log in!' };
     }
@@ -28,7 +28,7 @@ class AuthService {
             throw new Error('Please provide your email and password.');
         }
 
-        const user = await User.getByEmail(email);
+        const user = await Auth.getByEmail(email);
         if (!user) {
             throw new Error('Incorrect email or password.');
         }
@@ -56,7 +56,7 @@ class AuthService {
     }
 
     static async getUserInfo(userId) {
-        const user = await User.getById(userId);
+        const user = await Auth.getById(userId);
         if (!user) {
             throw new Error('User does not exist');
         }
@@ -75,7 +75,7 @@ class AuthService {
             throw new Error('Please provide your name and phone number.');
         }
 
-        const success = await User.update(userId, data);
+        const success = await Auth.update(userId, data);
         if (!success) {
             throw new Error('update failed');
         }

@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/userModel');
+const Auth = require('../models/authModel');
 require('dotenv').config();
 
 exports.verifyToken = async (req, res, next) => {
@@ -10,7 +10,7 @@ exports.verifyToken = async (req, res, next) => {
         }
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await User.getById(decoded.id);
+        const user = await Auth.getById(decoded.id);
         
         if (!user) {
             return res.status(401).json({ error: '使用者不存在' });
