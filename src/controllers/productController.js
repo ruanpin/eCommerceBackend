@@ -11,7 +11,8 @@ exports.getProducts = async (req, res) => {
         const products = await ProductService.getAll(parseInt(page), parseInt(pageSize));
         res.status(200).json({
             message: 'Products fetched successfully',
-            data: products
+            data: products.data,
+            totalCount: products.totalCount,
         });
     } catch (error) {
         res.status(400).json({

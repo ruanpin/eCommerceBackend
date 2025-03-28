@@ -6,7 +6,12 @@ class Product {
         const offset = (page - 1) * pageSize;
         const query = 'SELECT * FROM products LIMIT ?, ?';
         const [rows] = await db.query(query, [offset, pageSize]);
-        return rows;
+        const countQuery = 'SELECT COUNT(*) AS totalCount FROM products';
+        const [countResult] = await db.query(countQuery);
+        return {
+            data: rows,
+            totalCount: countResult[0].totalCount,
+        };
     }
 
     // 根據 ID 查詢產品
