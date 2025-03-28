@@ -5,10 +5,12 @@ const { verifyToken, verifyAdmin } = require('../middlewares/authMiddleware');
 
 router.get('/search', productController.searchProducts);
 
+// 查詢單個產品
+router.get('/:id', productController.getProductById);
+
 // 查詢所有產品，並包含分頁
 router.get('/', verifyToken, verifyAdmin, productController.getProducts);
-// 查詢單個產品
-router.get('/:id', verifyToken, verifyAdmin, productController.getProductById);
+
 // 新增產品
 router.post('/', verifyToken, verifyAdmin, productController.createProduct);
 // 更新產品

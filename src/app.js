@@ -1,11 +1,16 @@
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
+const bodyParser = require('body-parser');
 
 const authRoutes = require('./routes/authRoutes');
 // const bannerRoutes = require('./routes/bannerRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const productRoutes = require('./routes/productRoutes');
+const cartRoutes = require('./routes/cartRoutes');
+
+
+
 
 const app = express();
 
@@ -13,12 +18,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(morgan('dev')); // 記錄請求日誌
+app.use(bodyParser.json());
 
 // 路由設定
 app.use('/api/auth', authRoutes);
 // app.use('/api/banners', bannerRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/cart', cartRoutes);
 
 // 404 
 app.use((req, res) => {
