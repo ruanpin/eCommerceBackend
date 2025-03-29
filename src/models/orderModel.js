@@ -71,6 +71,37 @@ class Order {
 
         return result.affectedRows > 0;
     }
+
+    static async createOrder_member(userId, totalPrice, status, snapshot) {
+        const sql = `INSERT INTO orders (user_id, total_price, status, snapshot) VALUES (?, ?, ?, ?)`;
+        const [result] = await db.execute(sql, [
+            userId ?? null,
+            totalPrice ?? null,
+            status ?? null,
+            snapshot ?? null
+        ]);
+        return result.insertId;
+    }
+
+    static async getOrdersWithPagination_member(userId, page, limit) {
+        try {
+            const offset = (Number(page) - 1) * Number(limit);
+            const limitNum = Number(limit);
+            const userIdNum = Number(userId);
+            const sql = `SELECT * FROM orders WHERE user_id = ${userIdNum} LIMIT ${limitNum} OFFSET ${offset}`;
+            const [orders] = await db.execute(sql, [userIdNum, limitNum, offset]);
+            return orders;
+        } catch (error) {
+            console.error('Error executing SQL query:', error.message);
+            throw new Error('Database query failed');
+        }
+    }
+
+    static async updateOrderStatus_member(orderId, userId, status) {
+        const sql = `UPDATE orders SET status = ? WHERE id = ? AND user_id = ?`;
+        const [result] = await db.execute(sql, [status, orderId, userId]);
+        return result.affectedRows > 0;
+    }
 }
 
 module.exports = Order;

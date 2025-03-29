@@ -56,6 +56,22 @@ class Cart {
             currentPage: page
         };
     }
+
+    static async getCartItemsByIds(userId, cartItemIds) {
+        const sql = `SELECT ci.id, ci.product_id, ci.quantity, ci.color, ci.size, p.name, p.variants
+             FROM cart_items ci
+             JOIN products p ON ci.product_id = p.id
+             WHERE ci.id IN (${cartItemIds.join(', ')}) AND ci.user_id = ?`;
+
+        const [cartItems] = await db.execute(sql, [userId]);
+    
+        if (!cartItems || cartItems.length === 0) {
+            console.error(`No cart items found for user: ${userId} and cartItemIds: ${cartItemIds}`);
+            throw new Error('No valid cart items found.');
+        }
+    
+        return cartItems;
+    }
 }
 
 module.exports = Cart;

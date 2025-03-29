@@ -98,3 +98,43 @@ exports.deleteOrder = async (req, res) => {
         res.status(500).json({ message: 'Failed to delete the order.', status: 500 });
     }
 };
+
+exports.createOrder_member = async (req, res) => {
+    const { id } = req.user;  // 假設 userId 是來自驗證的 token 或 session
+    const { cart_item_ids } = req.body;
+    try {
+        const orderId = await OrderService.createOrder_member(id, cart_item_ids);
+        res.status(201).json({ message: 'Order created successfully.', status: 201, orderId });
+    } catch (error) {
+        res.status(500).json({ message: error.message, status: 500 });
+    }
+};
+
+exports.getOrders_member = async (req, res) => {
+    const { id } = req.user;
+    const { page = 1, limit = 10 } = req.query;
+
+    try {
+        const orders = await OrderService.getOrders_member(id, page, limit);
+        res.status(200).json({ message: 'Orders retrieved successfully.', status: 200, orders });
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to query orders.', status: 500 });
+    }
+};
+
+exports.updateOrderStatus_member = async (req, res) => {
+    const { id } = req.user;
+    const { orderId } = req.params;
+    const { status } = req.body;
+
+    try {
+        const updated = await OrderService.updateOrderStatus_member(orderId, id, status);
+        if (updated) {
+            res.status(200).json({ message: 'Order status updated successfully.', status: 200 });
+        } else {
+            res.status(404).json({ message: 'Order not found or unauthorized.', status: 404 });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to update order status.', status: 500 });
+    }
+};
