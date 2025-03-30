@@ -26,8 +26,8 @@ class ProductService {
 
     // 新增產品
     static async create(data) {
-        const { name, description, category_id, is_new, variants } = data;
-        const newProductId = await Product.create({ name, description, category_id, is_new, variants });
+        const { name, description, category_id, is_new, imgs, variants } = data;
+        const newProductId = await Product.create({ name, description, category_id, is_new, imgs, variants });
         return newProductId;
     }
 

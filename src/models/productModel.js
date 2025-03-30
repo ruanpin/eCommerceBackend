@@ -53,9 +53,9 @@ class Product {
 
     // 新增產品
     static async create(data) {
-        const { name, description, category_id, is_new, variants } = data;
-        const query = 'INSERT INTO products (name, description, category_id, is_new, variants) VALUES (?, ?, ?, ?, ?)';
-        const [result] = await db.query(query, [name, description, category_id, is_new, JSON.stringify(variants)]);
+        const { name, description, category_id, is_new, imgs, variants } = data;
+        const query = 'INSERT INTO products (name, description, category_id, is_new, imgs, variants) VALUES (?, ?, ?, ?, ?, ?)';
+        const [result] = await db.query(query, [name, description, category_id, is_new, JSON.stringify(imgs), JSON.stringify(variants)]);
         return result.insertId;
     }
 

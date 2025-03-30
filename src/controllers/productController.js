@@ -21,10 +21,6 @@ exports.searchProducts = async (req, res) => {
 };
 // 查詢所有產品，並支持分頁
 exports.getProducts = async (req, res) => {
-    // {
-    //     "page": 1,        // 頁碼，預設值為 1
-    //     "pageSize": 10    // 每頁顯示的數量，預設為 10
-    //   }
     try {
         const { page = 1, pageSize = 10 } = req.query; // 預設值為 1 和 10
         const products = await ProductService.getAll(parseInt(page), parseInt(pageSize));
@@ -65,6 +61,10 @@ exports.createProduct = async (req, res) => {
     //     "description": "A comfortable cotton T-shirt--No1",
     //     "category_id": 1,
     //     "is_new": true,
+    //     "imgs": [
+    //         "https://example.com/images/tshirt-red-m.jpg",
+    //         "https://example.com/images/tshirt-red-l.jpg"
+    //     ],
     //     "variants": [
     //         {
     //             "color": "Red",
@@ -72,7 +72,6 @@ exports.createProduct = async (req, res) => {
     //             "size": "M",
     //             "price": 19.99,
     //             "stock": 50,
-    //             "image_url": "https://example.com/images/tshirt-red-m.jpg"
     //         },
     //         {
     //             "color": "Red",
@@ -80,7 +79,6 @@ exports.createProduct = async (req, res) => {
     //             "size": "L",
     //             "price": 19.99,
     //             "stock": 35,
-    //             "image_url": "https://example.com/images/tshirt-red-l.jpg"
     //         }
     //     ]
     // }
