@@ -44,7 +44,8 @@ exports.getProductById = async (req, res) => {
         const product = await ProductService.getById(productId);
         res.status(200).json({
             message: 'Product fetched successfully',
-            data: product
+            data: product,
+            status: 200
         });
     } catch (error) {
         res.status(400).json({

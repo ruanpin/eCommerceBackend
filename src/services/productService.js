@@ -1,4 +1,5 @@
 const Product = require('../models/productModel');
+const Category = require('../models/categoryModel')
 
 class ProductService {
     static async searchProducts(page, pageSize, keyword, categoryId) {
@@ -21,7 +22,14 @@ class ProductService {
         if (!product) {
             throw new Error('Product not found');
         }
-        return product;
+        const productCategory = await Category.getById(product.category_id)
+        if (!productCategory) {
+            throw new Error('Product\'s categroy not found');
+        }
+        return {
+            ...product,
+            category_name: productCategory.name
+        };
     }
 
     // 新增產品
