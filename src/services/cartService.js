@@ -2,9 +2,9 @@ const Cart = require('../models/cartModel');
 
 class CartService {
     // 新增商品到購物車
-    static async addItemToCart(userId, productId, quantity, color, size) {
+    static async addItemToCart(userId, productId, quantity, color, size, color_code) {
         // 先檢查是否已存在相同商品、尺寸、顏色的購物車品項
-        const existingItem = await Cart.findItem(userId, productId, color, size);
+        const existingItem = await Cart.findItem(userId, productId, color, size, color_code);
 
         if (existingItem) {
             // 若已存在，則累加數量
@@ -13,7 +13,7 @@ class CartService {
             return existingItem.id; // 回傳更新的 cart_item ID
         } else {
             // 若沒有相同品項，則新增
-            return await Cart.addItem(userId, productId, quantity, color, size);
+            return await Cart.addItem(userId, productId, quantity, color, size, color_code);
         }
     }
 
@@ -48,7 +48,7 @@ class CartService {
             if (variant) {
                 item.price = variant.price;
             } else {
-                item.price = 0;  // 如果沒有找到對應的價格，設為 0
+                item.price = null;  // 如果沒有找到對應的價格，設為 null
             }
             
             // 計算總金額

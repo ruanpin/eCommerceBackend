@@ -2,9 +2,9 @@ const db = require('../config/database');
 
 class Cart {
     // 新增商品到購物車
-    static async addItem(userId, productId, quantity, color, size) {
-        const query = `INSERT INTO cart_items (user_id, product_id, quantity, color, size) VALUES (?, ?, ?, ?, ?)`;
-        const [result] = await db.execute(query, [userId, productId, quantity, color, size]);
+    static async addItem(userId, productId, quantity, color, size, color_code) {
+        const query = `INSERT INTO cart_items (user_id, product_id, quantity, color, size, color_code) VALUES (?, ?, ?, ?, ?, ?)`;
+        const [result] = await db.execute(query, [userId, productId, quantity, color, size, color_code]);
         return result.insertId;
     }
 
@@ -23,9 +23,9 @@ class Cart {
     }
 
     // 查詢是否有相同的購物車商品
-    static async findItem(userId, productId, color, size) {
-        const query = `SELECT id, quantity FROM cart_items WHERE user_id = ? AND product_id = ? AND color = ? AND size = ?`;
-        const [items] = await db.execute(query, [userId, productId, color, size]);
+    static async findItem(userId, productId, color, size, color_code) {
+        const query = `SELECT id, quantity FROM cart_items WHERE user_id = ? AND product_id = ? AND color = ? AND size = ? AND color_code = ?`;
+        const [items] = await db.execute(query, [userId, productId, color, size, color_code]);
         return items.length > 0 ? items[0] : null;
     }
 
@@ -34,9 +34,9 @@ class Cart {
         
         // 直接將變數填入 SQL 查詢來測試
         const query = `
-            SELECT ci.id, ci.quantity, ci.color, ci.size, 
+            SELECT ci.id, ci.quantity, ci.color, ci.size, ci.color_code,
                    p.id AS product_id, p.name, p.description, 
-                   p.category_id, p.is_new, p.created_at, p.updated_at, p.variants
+                   p.category_id, p.is_new, p.created_at, p.updated_at, p.variants, p.imgs
             FROM cart_items ci
             JOIN products p ON ci.product_id = p.id
             WHERE ci.user_id = ${userId}  -- 直接填入 userId
