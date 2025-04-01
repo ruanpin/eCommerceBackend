@@ -31,8 +31,8 @@ class CartService {
     // static async getCartItems(userId, page = 1, limit = 10) {
     //     return await Cart.getCartItemsByUserId(userId, page, limit);
     // }
-    static async getCartItems(userId, page = 1, limit = 10) {
-        const { items, totalItems, totalPages, currentPage } = await Cart.getCartItemsByUserId(userId, page, limit);
+    static async getCartItems(userId, page = 1, pageSize = 10) {
+        const { items, totalItems, totalPages, currentPage } = await Cart.getCartItemsByUserId(userId, page, pageSize);
     
         // 商業邏輯：處理 variants 並計算總金額
         let totalAmount = 0;

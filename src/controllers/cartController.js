@@ -48,10 +48,10 @@ exports.removeItem = async (req, res) => {
 // 查詢會員的購物車
 exports.getCart = async (req, res) => {
     const userId = req.user.id; // 直接從 req.user 取得 userId
-    const { page = 1, limit = 10 } = req.query;
+    const { page = 1, pageSize = 10 } = req.query;
 
     try {
-        const { items, totalItems, totalAmount, totalPages, currentPage } = await CartService.getCartItems(userId, page, limit);
+        const { items, totalItems, totalAmount, totalPages, currentPage } = await CartService.getCartItems(userId, page, pageSize);
         res.status(200).json({
             message: "Query successful.",
             status: 200,
