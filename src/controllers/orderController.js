@@ -47,9 +47,9 @@ exports.createOrder = async (req, res) => {
 
     try {
         const orderId = await OrderService.createOrder(userId, totalPrice, status, snapshot);
-        res.status(201).json({
+        res.status(200).json({
             message: 'Order created successfully.',
-            status: 201,
+            status: 200,
             orderId
         });
     } catch (error) {
@@ -104,7 +104,7 @@ exports.createOrder_member = async (req, res) => {
     const { cart_item_ids } = req.body;
     try {
         const orderId = await OrderService.createOrder_member(id, cart_item_ids);
-        res.status(201).json({ message: 'Order created successfully.', status: 201, orderId });
+        res.status(200).json({ message: 'Order created successfully.', status: 200, orderId });
     } catch (error) {
         res.status(500).json({ message: error.message, status: 500 });
     }
