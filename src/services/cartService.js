@@ -18,8 +18,8 @@ class CartService {
     }
 
     // 更新購物車商品數量
-    static async updateItemQuantity(id, quantity) {
-        return await Cart.updateItem(id, quantity);
+    static async updateItemQuantity(id, { quantity }) {
+            return await Cart.updateItem(id, quantity);
     }
 
     // 刪除購物車商品

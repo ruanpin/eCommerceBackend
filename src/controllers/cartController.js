@@ -18,14 +18,14 @@ exports.updateItem = async (req, res) => {
     const { id, quantity } = req.body;
 
     try {
-        const updated = await CartService.updateItemQuantity(id, quantity);
+        const updated = await CartService.updateItemQuantity(id, { quantity });
         if (updated) {
             res.status(200).json({ message: 'The items in the cart have been updated.', status: 200 });
         } else {
             res.status(404).json({ message: 'The item could not be found.', status: 404 });
         }
     } catch (error) {
-        res.status(500).json({ message: 'Failed to update the item quantity in the cart.', status: 500 });
+        res.status(500).json({ message: 'Failed to update the item in the cart.', status: 500 });
     }
 };
 
