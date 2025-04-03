@@ -90,7 +90,10 @@ class Order {
             const userIdNum = Number(userId);
             const sql = `SELECT * FROM orders WHERE user_id = ${userIdNum} LIMIT ${limitNum} OFFSET ${offset}`;
             const [orders] = await db.execute(sql, [userIdNum, limitNum, offset]);
-            return orders;
+            // 查詢符合條件的總筆數
+            const totalSql = `SELECT COUNT(*) AS total FROM orders WHERE user_id = ?`;
+            const [[{ total }]] = await db.execute(totalSql, [userIdNum]);
+            return { total, orders };
         } catch (error) {
             console.error('Error executing SQL query:', error.message);
             throw new Error('Database query failed');

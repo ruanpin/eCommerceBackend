@@ -58,7 +58,7 @@ class Cart {
     }
 
     static async getCartItemsByIds(userId, cartItemIds) {
-        const sql = `SELECT ci.id, ci.product_id, ci.quantity, ci.color, ci.size, p.name, p.variants
+        const sql = `SELECT ci.id, ci.product_id, ci.quantity, ci.color, ci.size, p.name, p.variants, p.imgs
              FROM cart_items ci
              JOIN products p ON ci.product_id = p.id
              WHERE ci.id IN (${cartItemIds.join(', ')}) AND ci.user_id = ?`;

@@ -112,11 +112,11 @@ exports.createOrder_member = async (req, res) => {
 
 exports.getOrders_member = async (req, res) => {
     const { id } = req.user;
-    const { page = 1, limit = 10 } = req.query;
+    const { page = 1, pageSize = 10 } = req.query;
 
     try {
-        const orders = await OrderService.getOrders_member(id, page, limit);
-        res.status(200).json({ message: 'Orders retrieved successfully.', status: 200, orders });
+        const { total, orders } = await OrderService.getOrders_member(id, page, pageSize);
+        res.status(200).json({ message: 'Orders retrieved successfully.', status: 200, data: orders, total });
     } catch (error) {
         res.status(500).json({ message: 'Failed to query orders.', status: 500 });
     }

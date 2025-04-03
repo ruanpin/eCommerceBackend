@@ -77,7 +77,8 @@ class OrderService {
             size: item.size,
             quantity: item.quantity,
             price: JSON.parse(item.variants).find(variant => 
-                variant.color === item.color && variant.size === item.size)?.price
+                variant.color === item.color && variant.size === item.size)?.price,
+            imgs: JSON.parse(item.imgs)
         })));
 
         // Step 4: 呼叫 Model 創建訂單
