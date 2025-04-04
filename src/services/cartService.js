@@ -1,12 +1,15 @@
 const Cart = require('../models/cartModel');
+const Product = require('../models/productModel')
 
 class CartService {
     // 新增商品到購物車
     static async addItemToCart(userId, productId, quantity, color, size, color_code) {
         // 先檢查是否已存在相同商品、尺寸、顏色的購物車品項
         const existingItem = await Cart.findItem(userId, productId, color, size, color_code);
-
         if (existingItem) {
+            const targetProduct = await Product.getById(productId)
+            const targetVariant = JSON.parse(targetProduct.variants).find(e => e.color === color && e.color_code === color_code && e.size === size)
+            if (targetVariant.stock < existingItem.quantity + quantity) throw new Error('Insufficient stock. You have exceeded the maximum purchase limit.')
             // 若已存在，則累加數量
             const newQuantity = existingItem.quantity + quantity;
             await Cart.updateItem(existingItem.id, newQuantity);
