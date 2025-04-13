@@ -88,7 +88,7 @@ class Order {
             const offset = (Number(page) - 1) * Number(limit);
             const limitNum = Number(limit);
             const userIdNum = Number(userId);
-            const sql = `SELECT * FROM orders WHERE user_id = ${userIdNum} LIMIT ${limitNum} OFFSET ${offset}`;
+            const sql = `SELECT * FROM orders WHERE user_id = ${userIdNum} ORDER BY created_at DESC LIMIT ${limitNum} OFFSET ${offset}`;
             const [orders] = await db.execute(sql, [userIdNum, limitNum, offset]);
             // 查詢符合條件的總筆數
             const totalSql = `SELECT COUNT(*) AS total FROM orders WHERE user_id = ?`;
